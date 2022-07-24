@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.alix.codable.logging;
+package io.github.pakistancan.codable.logging;
 
 /**
  * @author muhammadali

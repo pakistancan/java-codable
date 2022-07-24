@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.alix.codable.processor;
+package io.github.pakistancan.codable.processor;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,14 +29,15 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
 
-import com.alix.codable.annotation.Codable;
-import com.alix.codable.annotation.IgnoreProperty;
-import com.alix.codable.logging.LogFactory;
-import com.alix.codable.logging.Logger;
-import com.alix.codable.model.ObjectType;
-import com.alix.codable.model.TypeInfo;
+import io.github.pakistancan.codable.annotation.Codable;
+import io.github.pakistancan.codable.annotation.IgnoreProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.github.pakistancan.codable.logging.LogFactory;
+import io.github.pakistancan.codable.logging.Logger;
+import io.github.pakistancan.codable.model.ObjectType;
+import io.github.pakistancan.codable.model.TypeInfo;
 
 /**
  * @author muhammadali

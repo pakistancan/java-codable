@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.alix.codable.logging;
+package io.github.pakistancan.codable.logging;
 
 import java.util.HashMap;
 import java.util.Map;

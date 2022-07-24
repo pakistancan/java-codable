@@ -1,9 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.alix.codable</groupId>
+	<groupId>io.github.pakistancan</groupId>
 	<artifactId>codable-converter</artifactId>
 	<version>1.0</version>
-	<name>codable-converter</name>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>java-codable is a Java beans to swift codable converter, it is java compile plugin, you need to add this your maven configuration to get it working.</description>
+	<url>https://github.com/pakistancan/java-codable</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://github.com/pakistancan/java-codable/blob/main/LICENSE</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Muhammad Ali</name>
+			<email>pakistancan@gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/pakistancan/java-codable.git</connection>
+		<developerConnection>scm:git:ssh://github.com:pakistancan/java-codable.git</developerConnection>
+		<url>http://github.com/pakistancan/java-codable/tree/main</url>
+	</scm>
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
@@ -19,7 +41,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.13.3</version>
 		</dependency>
-
 
 	</dependencies>
 

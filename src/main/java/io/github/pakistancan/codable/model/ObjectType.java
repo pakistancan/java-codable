@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.alix.codable.model;
+package io.github.pakistancan.codable.model;
 
 /**
  * @author muhammadali
