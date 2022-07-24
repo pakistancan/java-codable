@@ -5,7 +5,7 @@ java-codable is a Java beans to swift codable converter, it is java compile plug
 
 Add codeable to project dependencies
 
-```maven
+```xml
 		<dependency>
 			<groupId>com.alix.codable</groupId>
 			<artifactId>codable-converter</artifactId>
@@ -15,7 +15,7 @@ Add codeable to project dependencies
 
 ## Compiler configuration
 
-```maven
+```xml
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
