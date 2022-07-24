@@ -4,6 +4,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ * This class represent type info mapping from Java primitive types to Swift
+ * primitive types
+ */
 public class TypeInfo {
 
 	private static final Map<String, TypeInfo> mapping = new HashMap<String, TypeInfo>();
@@ -39,13 +44,19 @@ public class TypeInfo {
 	public ObjectType type;
 
 	/**
-	 * @param defaultValue
-	 * @param swiftName
+	 * @param defaultValue	Default value of swift type
+	 * @param swiftName	Name of swift type
 	 */
 	public TypeInfo(String swiftName, String defaultValue) {
 		this(swiftName, defaultValue, ObjectType.SIMPLE);
 	}
 
+	/**
+	 * 
+	 * @param swiftName	Name of swift type
+	 * @param defaultValue Default value of swift type
+	 * @param type type of object {@link ObjectType}
+	 */
 	public TypeInfo(String swiftName, String defaultValue, ObjectType type) {
 		super();
 		this.defaultValue = defaultValue;
@@ -53,6 +64,11 @@ public class TypeInfo {
 		this.type = type;
 	}
 
+	/**
+	 * 
+	 * @param name	name of type trying to lookup
+	 * @return type info if exists, otherwise null
+	 */
 	public static TypeInfo getTypeInfo(String name) {
 		if (mapping.containsKey(name)) {
 			return mapping.get(name);
