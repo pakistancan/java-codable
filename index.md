@@ -1,37 +1,191 @@
-## Welcome to GitHub Pages
+# java-codable
+java-codable is a Java beans to swift codable converter, it is java compile plugin, you need to add this your maven configuration to get it working.
 
-You can use the [editor on GitHub](https://github.com/pakistancan/java-codable/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Configuration
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Add codeable to project dependencies
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```xml
+		<dependency>
+			<groupId>com.alix.codable</groupId>
+			<artifactId>codable-converter</artifactId>
+			<version>1.0</version>
+		</dependency>
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+## Compiler configuration
 
-### Jekyll Themes
+```xml
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<annotationProcessors>
+						<annotationProcessor>com.alix.codable.processor.CodableGenerator</annotationProcessor>
+					</annotationProcessors>
+					<verbose>true</verbose>
+					<compilerArguments>
+						<Xlint />
+						<AOutputDir>./generated/</AOutputDir>
+						<APackagePrefix>com.alix.</APackagePrefix>
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pakistancan/java-codable/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+						<!-- -Xlint:all -->
+					</compilerArguments>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+```
 
-### Support or Contact
+It will convert classes referenced from `com.alix.` and all of its sub-packages, output will be generated in `<PROJECT_DIR>/generated/swift`, if package contains `.request.` then it'll generate those classes in REQ subfolder, otherwise in RES sub-folder.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Enums will be generated in `Enums` sub-folder, if there is any date referenced in any class, Formatters class will be generated in `Formatter/` sub-folder
+
+
+## Usage
+Decorate your beans with @Codable annotation, if it is specified on base class it is already applied on derived classes, java-codable regards `com.fasterxml.jackson.annotation.JsonProperty` to apply custom name to serialize/deserialize properties and `com.fasterxml.jackson.annotation.JsonFormat` to use specific date formats.
+
+### Example 
+```java
+package com.alix.request;
+
+import com.alix.codable.annotation.Codable;
+import com.alix.codable.annotation.IgnoreProperty;
+
+/**
+ * @author muhammadali
+ *
+ */
+
+@Codable
+public class BookInfo {
+
+	private String title;
+	private String isbn;
+	private AuthorInfo[] authors;
+	
+	@IgnoreProperty
+	private String ignoredField;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public AuthorInfo[] getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(AuthorInfo[] authors) {
+		this.authors = authors;
+	}
+
+}
+```
+and 
+```java
+package com.alix.request;
+
+public class AuthorInfo {
+
+	private String author;
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+}
+```
+
+It'll generate swift files for both value objects.
+
+All primitive classes, user defined classes and collection classes are supported(except queues), here is another example you can use to get a better overview
+
+```java
+package com.alix.request;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import com.alix.codable.annotation.Codable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@Codable
+public class Sample {
+
+	@JsonProperty("sample_id")
+	public int id;
+
+	@JsonProperty("sample_list")
+	public List<String> sampleList;
+
+	@JsonProperty("sample_list1")
+	public ArrayList<String> sampleList1;
+
+	@JsonProperty("sample_set")
+	public Set<String> sampleSet;
+
+	@JsonProperty("sample_list_set")
+	public Set<List<String>> sampleListSet;
+
+	public HashSet<String> sampleHashSet;
+
+	public TreeSet<String> sampleTreeSet;
+	
+	public LinkedHashSet<String> linkedHashSet;
+
+
+	public HashMap<String, String> sampleHashMap;
+
+	public TreeMap<String, String> sampleTreeMap;
+
+	public LinkedHashMap<String, Set<String>> linkedHashMap;
+
+	public LinkedHashMap<String, TreeSet<String>> linkedHashMapSet;
+
+	
+	public String[] inputs;
+	
+	public String[][] inputsMap;
+
+}
+
+```
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+[MIT](https://github.com/pakistancan/java-codable/blob/main/LICENSE)
