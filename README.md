@@ -7,7 +7,7 @@ Add codeable to project dependencies
 
 ```xml
 		<dependency>
-			<groupId>com.alix.codable</groupId>
+			<groupId>io.github.pakistancan</groupId>
 			<artifactId>codable-converter</artifactId>
 			<version>1.0</version>
 		</dependency>
@@ -27,7 +27,7 @@ Add codeable to project dependencies
 					<source>1.8</source>
 					<target>1.8</target>
 					<annotationProcessors>
-						<annotationProcessor>com.alix.codable.processor.CodableGenerator</annotationProcessor>
+						<annotationProcessor>io.github.pakistancan.codable.processor.CodableGenerator</annotationProcessor>
 					</annotationProcessors>
 					<verbose>true</verbose>
 					<compilerArguments>
@@ -55,10 +55,13 @@ Decorate your beans with @Codable annotation, if it is specified on base class i
 
 ### Example 
 ```java
+/**
+ * 
+ */
 package com.alix.request;
 
-import com.alix.codable.annotation.Codable;
-import com.alix.codable.annotation.IgnoreProperty;
+import io.github.pakistancan.codable.annotation.Codable;
+import io.github.pakistancan.codable.annotation.IgnoreProperty;
 
 /**
  * @author muhammadali
@@ -137,8 +140,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.alix.codable.annotation.Codable;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.github.pakistancan.codable.annotation.Codable;
 
 @Codable
 public class Sample {
@@ -161,9 +165,8 @@ public class Sample {
 	public HashSet<String> sampleHashSet;
 
 	public TreeSet<String> sampleTreeSet;
-	
-	public LinkedHashSet<String> linkedHashSet;
 
+	public LinkedHashSet<String> linkedHashSet;
 
 	public HashMap<String, String> sampleHashMap;
 
@@ -173,13 +176,11 @@ public class Sample {
 
 	public LinkedHashMap<String, TreeSet<String>> linkedHashMapSet;
 
-	
 	public String[] inputs;
-	
+
 	public String[][] inputsMap;
 
 }
-
 ```
 
 ## Contributing
