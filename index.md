@@ -9,7 +9,7 @@ Add codeable to project dependencies
 		<dependency>
 			<groupId>io.github.pakistancan</groupId>
 			<artifactId>codable-converter</artifactId>
-			<version>1.0</version>
+			<version>1.0.1</version>
 		</dependency>
 ```
 
@@ -125,6 +125,78 @@ public class AuthorInfo {
 
 It'll generate swift files for both value objects.
 
+Output files for the above classes looks like
+`BookInfo.swift`
+
+```swift
+import Foundation
+
+public class BookInfo: Codable {
+    public init() {
+    }
+    public var title: String = ""
+    public var isbn: String = ""
+    public var authors: [AuthorInfo] = []
+    private enum CodingKeys: String, CodingKey {
+        case isbn = "isbn"
+        case title = "title"
+        case authors = "authors"
+
+    }
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let title = try container.decodeIfPresent(String.self, forKey: .title) {
+            self.title = title
+        }
+
+        if let isbn = try container.decodeIfPresent(String.self, forKey: .isbn) {
+            self.isbn = isbn
+        }
+
+        if let authors = try container.decodeIfPresent([AuthorInfo].self, forKey: .authors) {
+            self.authors = authors
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(self.title, forKey: .title)
+        try container.encodeIfPresent(self.isbn, forKey: .isbn)
+        try container.encodeIfPresent(self.authors, forKey: .authors)
+    }
+
+}
+```
+
+`AuthorInfo.swift`
+```swift
+import Foundation
+
+public class AuthorInfo: Codable {
+    public init() {
+    }
+    public var author: String = ""
+    private enum CodingKeys: String, CodingKey {
+        case author = "author"
+
+    }
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let author = try container.decodeIfPresent(String.self, forKey: .author) {
+            self.author = author
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(self.author, forKey: .author)
+    }
+
+}
+```
+
 All primitive classes, user defined classes and collection classes are supported(except queues), here is another example you can use to get a better overview
 
 ```java
@@ -179,6 +251,126 @@ public class Sample {
 	public String[] inputs;
 
 	public String[][] inputsMap;
+
+}
+```
+Output of above class should be something like this
+
+`Sample.swift`
+```swift
+import Foundation
+
+public class Sample: Codable {
+    public init() {
+    }
+    public var id: Int = 0
+    public var sampleList: [String] = []
+    public var sampleList1: [String] = []
+    public var sampleSet: [String] = []
+    public var sampleListSet: [[String]] = []
+    public var sampleHashSet: [String] = []
+    public var sampleTreeSet: [String] = []
+    public var linkedHashSet: [String] = []
+    public var sampleHashMap: [String:String] = [:]
+    public var sampleTreeMap: [String:String] = [:]
+    public var linkedHashMap: [String:[String]] = [:]
+    public var linkedHashMapSet: [String:[String]] = [:]
+    public var inputs: [String] = []
+    public var inputsMap: [[String]] = []
+    private enum CodingKeys: String, CodingKey {
+        case linkedHashSet = "linkedHashSet"
+        case sampleTreeMap = "sampleTreeMap"
+        case sampleHashSet = "sampleHashSet"
+        case inputs = "inputs"
+        case sampleListSet = "sample_list_set"
+        case sampleHashMap = "sampleHashMap"
+        case sampleList = "sample_list"
+        case sampleSet = "sample_set"
+        case linkedHashMap = "linkedHashMap"
+        case sampleTreeSet = "sampleTreeSet"
+        case linkedHashMapSet = "linkedHashMapSet"
+        case sampleList1 = "sample_list1"
+        case inputsMap = "inputsMap"
+        case id = "sample_id"
+
+    }
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let id = try container.decodeIfPresent(Int.self, forKey: .id) {
+            self.id = id
+        }
+
+        if let sampleList = try container.decodeIfPresent([String].self, forKey: .sampleList) {
+            self.sampleList = sampleList
+        }
+
+        if let sampleList1 = try container.decodeIfPresent([String].self, forKey: .sampleList1) {
+            self.sampleList1 = sampleList1
+        }
+
+        if let sampleSet = try container.decodeIfPresent([String].self, forKey: .sampleSet) {
+            self.sampleSet = sampleSet
+        }
+
+        if let sampleListSet = try container.decodeIfPresent([[String]].self, forKey: .sampleListSet) {
+            self.sampleListSet = sampleListSet
+        }
+
+        if let sampleHashSet = try container.decodeIfPresent([String].self, forKey: .sampleHashSet) {
+            self.sampleHashSet = sampleHashSet
+        }
+
+        if let sampleTreeSet = try container.decodeIfPresent([String].self, forKey: .sampleTreeSet) {
+            self.sampleTreeSet = sampleTreeSet
+        }
+
+        if let linkedHashSet = try container.decodeIfPresent([String].self, forKey: .linkedHashSet) {
+            self.linkedHashSet = linkedHashSet
+        }
+
+        if let sampleHashMap = try container.decodeIfPresent([String:String].self, forKey: .sampleHashMap) {
+            self.sampleHashMap = sampleHashMap
+        }
+
+        if let sampleTreeMap = try container.decodeIfPresent([String:String].self, forKey: .sampleTreeMap) {
+            self.sampleTreeMap = sampleTreeMap
+        }
+
+        if let linkedHashMap = try container.decodeIfPresent([String:[String]].self, forKey: .linkedHashMap) {
+            self.linkedHashMap = linkedHashMap
+        }
+
+        if let linkedHashMapSet = try container.decodeIfPresent([String:[String]].self, forKey: .linkedHashMapSet) {
+            self.linkedHashMapSet = linkedHashMapSet
+        }
+
+        if let inputs = try container.decodeIfPresent([String].self, forKey: .inputs) {
+            self.inputs = inputs
+        }
+
+        if let inputsMap = try container.decodeIfPresent([[String]].self, forKey: .inputsMap) {
+            self.inputsMap = inputsMap
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(self.id, forKey: .id)
+        try container.encodeIfPresent(self.sampleList, forKey: .sampleList)
+        try container.encodeIfPresent(self.sampleList1, forKey: .sampleList1)
+        try container.encodeIfPresent(self.sampleSet, forKey: .sampleSet)
+        try container.encodeIfPresent(self.sampleListSet, forKey: .sampleListSet)
+        try container.encodeIfPresent(self.sampleHashSet, forKey: .sampleHashSet)
+        try container.encodeIfPresent(self.sampleTreeSet, forKey: .sampleTreeSet)
+        try container.encodeIfPresent(self.linkedHashSet, forKey: .linkedHashSet)
+        try container.encodeIfPresent(self.sampleHashMap, forKey: .sampleHashMap)
+        try container.encodeIfPresent(self.sampleTreeMap, forKey: .sampleTreeMap)
+        try container.encodeIfPresent(self.linkedHashMap, forKey: .linkedHashMap)
+        try container.encodeIfPresent(self.linkedHashMapSet, forKey: .linkedHashMapSet)
+        try container.encodeIfPresent(self.inputs, forKey: .inputs)
+        try container.encodeIfPresent(self.inputsMap, forKey: .inputsMap)
+    }
 
 }
 ```
