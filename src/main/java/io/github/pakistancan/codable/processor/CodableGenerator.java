@@ -43,7 +43,7 @@ import io.github.pakistancan.codable.model.TypeInfo;
  * @author muhammadali
  *
  */
-@SupportedAnnotationTypes("com.alix.codable.annotation.Codable")
+@SupportedAnnotationTypes("io.github.pakistancan.codable.annotation.Codable")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 @SupportedOptions(value = { "OutputDir", "PackagePrefix" })
 public class CodableGenerator extends AbstractProcessor {
