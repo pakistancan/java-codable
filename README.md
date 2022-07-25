@@ -9,7 +9,7 @@ Add codeable to project dependencies
 		<dependency>
 			<groupId>io.github.pakistancan</groupId>
 			<artifactId>codable-converter</artifactId>
-			<version>1.0</version>
+			<version>1.0.1</version>
 		</dependency>
 ```
 
