@@ -32,6 +32,7 @@ import javax.tools.Diagnostic.Kind;
 import io.github.pakistancan.codable.annotation.Codable;
 import io.github.pakistancan.codable.annotation.IgnoreProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.github.pakistancan.codable.logging.LogFactory;
@@ -168,9 +169,9 @@ public class CodableGenerator extends AbstractProcessor {
 				this.logger.info("continuing ");
 				continue;
 			}
-
+			JsonIgnoreProperties jsonIgnoreProp = var.getAnnotation(JsonIgnoreProperties.class);
 			IgnoreProperty ignoreProp = var.getAnnotation(IgnoreProperty.class);
-			if (ignoreProp != null) {
+			if (ignoreProp != null || jsonIgnoreProp != null) {
 				this.logger.info("ignore property annotation found");
 				continue;
 			}
@@ -231,18 +232,19 @@ public class CodableGenerator extends AbstractProcessor {
 				typeToMarshal = "String";
 			} else if (newType.type == ObjectType.DATE) {
 				generateFormatters = true;
-				JsonFormat formatInfo = var.getAnnotation(JsonFormat.class);
-				if (formatInfo != null && "".equals(formatInfo.pattern()) == false) {
+				JsonFormat dateFormat = var.getAnnotation(JsonFormat.class);
+				String pattern = "yyyy-MM-dd'T'HH:mm:ssZ";
+
+				if (dateFormat != null) {
+					pattern = dateFormat.pattern();
+				}
+
+				if ("".equals(pattern) == false) {
 					typeToMarshal = "String";
 
-					assignedValue = "Formatters.shared.getDate(format: \"" + formatInfo.pattern() + "\", date: "
+					assignedValue = "Formatters.shared.getDate(format: \"" + pattern + "\", date: " + varName + ")";
+					encodedValueName = "Formatters.shared.formatDate(format: \"" + pattern + "\", date: " + "self."
 							+ varName + ")";
-					encodedValueName = "Formatters.shared.formatDate(format: \"" + formatInfo.pattern() + "\", date: "
-							+ "self." + varName + ")";
-				} else {
-					typeToMarshal = "Int64";
-					assignedValue = "Formatters.shared.getDate(interval: " + varName + ")";
-					encodedValueName = "Formatters.shared.getMilliSeconds(date: " + "self." + varName + ")";
 				}
 
 			}
