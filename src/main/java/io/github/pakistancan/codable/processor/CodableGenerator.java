@@ -46,7 +46,7 @@ import io.github.pakistancan.codable.model.TypeInfo;
  */
 @SupportedAnnotationTypes("io.github.pakistancan.codable.annotation.Codable")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-@SupportedOptions(value = { "OutputDir", "PackagePrefix" })
+@SupportedOptions(value = { "OutputDir", "PackagePrefix", "ClassModifier" })
 public class CodableGenerator extends AbstractProcessor {
 
 	private static final String EXT = ".swift";
@@ -70,7 +70,15 @@ public class CodableGenerator extends AbstractProcessor {
 
 	private String outputDir = "./generated/";
 	private String packagePrefix = "com.alix.";
+	private String classModifier = "public";
 	private boolean generateFormatters = false;
+
+	private static final Set<String> allowedModifiers = new HashSet<>();
+
+	static {
+		allowedModifiers.add("public");
+		allowedModifiers.add("open");
+	}
 
 	private Logger logger;
 	// private String string;
@@ -102,6 +110,10 @@ public class CodableGenerator extends AbstractProcessor {
 		if (prefix != null) {
 			this.packagePrefix = prefix;
 		}
+		String modifier = options.get("ClassModifier");
+		if (modifier != null && allowedModifiers.contains(modifier)) {
+			this.classModifier = modifier;
+		}
 
 		for (String ifaceName : collectionsInterfaces) {
 			this.logger.info("Interface Name" + ifaceName);
@@ -129,7 +141,7 @@ public class CodableGenerator extends AbstractProcessor {
 		this.logger.info("Encloding Elems :: " + element.getEnclosedElements());
 
 		builder.append("import Foundation\n\n");
-		builder.append("public class " + element.getSimpleName());
+		builder.append(classModifier + " class " + element.getSimpleName());
 		boolean override = false;
 
 		if (parentClass.length() > 0) {
@@ -378,7 +390,7 @@ public class CodableGenerator extends AbstractProcessor {
 
 				StringBuilder sb = new StringBuilder();
 				if (!isGenerated) {
-					sb.append("\npublic enum " + newTypeElem.getSimpleName() + ": String, Codable {\n");
+					sb.append("\n" + classModifier + " enum " + newTypeElem.getSimpleName() + ": String, Codable {\n");
 				}
 				List<String> enumElems = new ArrayList<String>();
 				for (Element elm : elems) {
@@ -484,7 +496,7 @@ public class CodableGenerator extends AbstractProcessor {
 		String prefix = "Formatter/";
 		String key = "Formatters";
 
-		String formatterClass = "import Foundation\n" + "\n" + "public class Formatters {\n"
+		String formatterClass = "import Foundation\n" + "\n" + classModifier + " class Formatters {\n"
 				+ "    private var formatters: [String: DateFormatter] = [:]\n"
 				+ "    public static let shared: Formatters = Formatters()\n" + "\n"
 				+ "    public func getFormatter(format: String) -> DateFormatter {\n"
