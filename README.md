@@ -9,7 +9,7 @@ Add codeable to project dependencies
 		<dependency>
 			<groupId>io.github.pakistancan</groupId>
 			<artifactId>codable-converter</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 ```
 
@@ -34,7 +34,7 @@ Add codeable to project dependencies
 						<Xlint />
 						<AOutputDir>./generated/</AOutputDir>
 						<APackagePrefix>com.alix.</APackagePrefix>
-
+						<AClassModifier>open</AClassModifier>
 						<!-- -Xlint:all -->
 					</compilerArguments>
 					<showWarnings>true</showWarnings>
