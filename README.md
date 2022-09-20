@@ -1,4 +1,4 @@
-[![Java CI with Maven](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml/badge.svg)](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml/badge.svg)](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml) [![CircleCI](https://dl.circleci.com/status-badge/img/gh/pakistancan/java-codable/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/pakistancan/java-codable/tree/main)
 
 # java-codable
 java-codable is a Java beans to swift codable converter, it is java compile plugin, you need to add this your maven configuration to get it working.
