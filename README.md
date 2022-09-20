@@ -1,3 +1,5 @@
+[![Java CI with Maven](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml/badge.svg)](https://github.com/pakistancan/java-codable/actions/workflows/maven.yml)
+
 # java-codable
 java-codable is a Java beans to swift codable converter, it is java compile plugin, you need to add this your maven configuration to get it working.
 
