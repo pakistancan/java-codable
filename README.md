@@ -51,6 +51,19 @@ It will convert classes referenced from `com.alix.` and all of its sub-packages,
 
 Enums will be generated in `Enums` sub-folder, if there is any date referenced in any class, Formatters class will be generated in `Formatter/` sub-folder
 
+If you are using gradle it should be as simple as adding anootation processor to your dependenc 
+
+```gradle
+	annotationProcessor 'io.github.pakistancan:codable-converter:1.0.3'
+```
+
+compiler arguments can be configured using
+
+```gradle
+	compileJava {
+		options.compilerArgs += '-AClassModifier=public'
+	}
+```
 
 ## Usage
 Decorate your beans with @Codable annotation, if it is specified on base class it is already applied on derived classes, java-codable regards `com.fasterxml.jackson.annotation.JsonProperty` to apply custom name to serialize/deserialize properties and `com.fasterxml.jackson.annotation.JsonFormat` to use specific date formats.
