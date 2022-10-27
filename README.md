@@ -51,7 +51,7 @@ It will convert classes referenced from `com.alix.` and all of its sub-packages,
 
 Enums will be generated in `Enums` sub-folder, if there is any date referenced in any class, Formatters class will be generated in `Formatter/` sub-folder
 
-If you are using gradle it should be as simple as adding anootation processor to your dependenc 
+If you are using gradle, it should be as simple as adding anootation processor to dependencies section of your build.gradle file
 
 ```gradle
 	annotationProcessor 'io.github.pakistancan:codable-converter:1.0.3'
