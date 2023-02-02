@@ -493,7 +493,7 @@ public class CodableGenerator extends AbstractProcessor {
         throw new RuntimeException("Unknown type " + tp);
     }
 
-    public void generateFormatter() {
+    private void generateFormatter() {
 
         String prefix = "Formatter/";
         String key = "Formatters";
