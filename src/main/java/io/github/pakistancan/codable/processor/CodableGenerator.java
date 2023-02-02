@@ -322,7 +322,7 @@ public class CodableGenerator extends AbstractProcessor {
         return false;
     }
 
-    public TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
+    public synchronized TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
                                 RoundEnvironment roundEnv) {
         TypeInfo newType = null;
 
@@ -430,8 +430,6 @@ public class CodableGenerator extends AbstractProcessor {
 //                TypeElement tm = mirror;
                 do {
                     this.logger.info("class:: " + tm);
-                    this.logger.info("ifaces:: " + tm.getInterfaces());
-
                     for (TypeMirror iface : tm.getInterfaces()) {
                         for (Map.Entry<String, TypeMirror> infaceName : this.collectionTypeMirror.entrySet()) {
                             TypeMirror ifaceMirror = infaceName.getValue();
