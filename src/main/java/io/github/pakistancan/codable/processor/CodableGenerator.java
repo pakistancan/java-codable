@@ -57,7 +57,7 @@ public class CodableGenerator extends AbstractProcessor {
     }
 
     private final ConcurrentMap<String, TypeMirror> collectionTypeMirror = new ConcurrentHashMap<>();
-    private final Map<String, StringBuilder> generatedEnums = new HashMap<>();
+    private final ConcurrentMap<String, StringBuilder> generatedEnums = new ConcurrentHashMap<>();
     private String outputDir = "./generated/";
     private String packagePrefix = "com.alix.";
     private String classModifier = "public";
