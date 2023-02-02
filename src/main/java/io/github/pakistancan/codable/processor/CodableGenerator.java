@@ -299,7 +299,7 @@ public class CodableGenerator extends AbstractProcessor {
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element elem : roundEnv.getElementsAnnotatedWith(Codable.class)) {
             Codable complexity = elem.getAnnotation(Codable.class);
             String message = "annotation found in " + elem.getSimpleName() + " with complexity " + complexity;
