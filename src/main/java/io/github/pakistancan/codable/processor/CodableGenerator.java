@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * @author muhammadali
  *
@@ -319,7 +321,7 @@ public class CodableGenerator extends AbstractProcessor {
             this.generateFormatter();
         }
 
-        return true;
+        return false;
     }
 
     public TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
@@ -530,7 +532,7 @@ public class CodableGenerator extends AbstractProcessor {
         }
 
         try (FileOutputStream fout = new FileOutputStream(newPath)) {
-            fout.write(output.getBytes());
+            fout.write(output.getBytes(UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
