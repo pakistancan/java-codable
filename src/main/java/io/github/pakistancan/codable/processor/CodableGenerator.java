@@ -74,7 +74,7 @@ public class CodableGenerator extends AbstractProcessor {
     }
 
     @Override
-    public void init(ProcessingEnvironment processingEnv) {
+    public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         this.logger = LogFactory.getInstance().getLogger();
 
