@@ -324,7 +324,7 @@ public class CodableGenerator extends AbstractProcessor {
         return false;
     }
 
-    public synchronized TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
+    private synchronized TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
                                 RoundEnvironment roundEnv) {
         TypeInfo newType = null;
 
@@ -480,7 +480,7 @@ public class CodableGenerator extends AbstractProcessor {
         return newType;
     }
 
-    public TypeInfo getTypeInfo(String tp) {
+    private TypeInfo getTypeInfo(String tp) {
         TypeInfo info = TypeInfo.getTypeInfo(tp);
         if (info != null) {
             return info;
@@ -519,7 +519,7 @@ public class CodableGenerator extends AbstractProcessor {
 
     }
 
-    public void writeOutput(String output, String directory, String filename) {
+    private void writeOutput(String output, String directory, String filename) {
         File file = new File(directory);
         if (!file.exists()) {
             file.mkdirs();
