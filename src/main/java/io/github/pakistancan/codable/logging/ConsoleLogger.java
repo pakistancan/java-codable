@@ -29,4 +29,11 @@ public class ConsoleLogger implements Logger {
 		System.out.println(message);
 	}
 
+
+	@Override
+	public void error(String message, Exception ex) {
+		System.out.println(message);
+		ex.printStackTrace();
+	}
+
 }

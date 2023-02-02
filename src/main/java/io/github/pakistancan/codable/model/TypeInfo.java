@@ -65,9 +65,10 @@ public class TypeInfo {
 	}
 
 	/**
-	 * 
+	 *Returns type info if exists, otherwise null.
+ 
 	 * @param name	name of type trying to lookup
-	 * @return type info if exists, otherwise null
+	 * 
 	 */
 	public static TypeInfo getTypeInfo(String name) {
 		if (mapping.containsKey(name)) {
