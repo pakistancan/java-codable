@@ -19,9 +19,7 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -281,8 +279,8 @@ public class CodableGenerator extends AbstractProcessor {
 
         if (jsonMap.size() > 0) {
             builder.append("    private enum CodingKeys: String, CodingKey {\n");
-            for (String key : jsonMap.keySet()) {
-                builder.append("        case ").append(key).append(" = \"").append(jsonMap.get(key)).append("\"\n");
+            for (Map.Entry<String, String> elem : jsonMap.entrySet()) {
+                builder.append("        case ").append(elem.getKey()).append(" = \"").append(elem.getValue()).append("\"\n");
             }
             builder.append("\n    }");
         }
@@ -311,8 +309,8 @@ public class CodableGenerator extends AbstractProcessor {
 
         if (generatedEnums.size() > 0) {
             String prefix = "Enums/";
-            for (String key : generatedEnums.keySet()) {
-                this.writeOutput(generatedEnums.get(key).toString(), outputDir + prefix, key + EXT);
+            for (Map.Entry<String, StringBuilder> elem : generatedEnums.entrySet()) {
+                this.writeOutput(elem.getValue().toString(), outputDir + prefix, elem.getKey() + EXT);
             }
 
         }
@@ -435,8 +433,8 @@ public class CodableGenerator extends AbstractProcessor {
                     this.logger.info("ifaces:: " + tm.getInterfaces());
 
                     for (TypeMirror iface : tm.getInterfaces()) {
-                        for (String infaceName : this.collectionTypeMirror.keySet()) {
-                            TypeMirror ifaceMirror = this.collectionTypeMirror.get(infaceName);
+                        for (Map.Entry<String, TypeMirror> infaceName : this.collectionTypeMirror.entrySet()) {
+                            TypeMirror ifaceMirror = infaceName.getValue();
                             this.logger.info("iface:: " + iface + " ifaceMirror:: " + ifaceMirror);
                             this.logger.info("Assignable01:: "
                                     + processingEnv.getTypeUtils().isAssignable(tm.asType(), ifaceMirror));
@@ -449,7 +447,7 @@ public class CodableGenerator extends AbstractProcessor {
                                     "Assignable2:: " + processingEnv.getTypeUtils().isAssignable(ifaceMirror, iface));
                             if (processingEnv.getTypeUtils().isAssignable(ifaceMirror, iface)
                                     || iface.toString().contains(ifaceMirror.toString())) {
-                                String newTypeName = type.replace(tp, infaceName);
+                                String newTypeName = type.replace(tp, infaceName.getKey());
                                 return getTypeInfo(newTypeName, field, enumMap, roundEnv);
 
                             }
@@ -534,7 +532,7 @@ public class CodableGenerator extends AbstractProcessor {
         try (FileOutputStream fout = new FileOutputStream(newPath)) {
             fout.write(output.getBytes(UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
     }
