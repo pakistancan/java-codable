@@ -21,6 +21,8 @@ import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -54,7 +56,7 @@ public class CodableGenerator extends AbstractProcessor {
         allowedModifiers.add("open");
     }
 
-    private final Map<String, TypeMirror> collectionTypeMirror = new HashMap<>();
+    private final ConcurrentMap<String, TypeMirror> collectionTypeMirror = new ConcurrentHashMap<>();
     private final Map<String, StringBuilder> generatedEnums = new HashMap<>();
     private String outputDir = "./generated/";
     private String packagePrefix = "com.alix.";
@@ -72,7 +74,7 @@ public class CodableGenerator extends AbstractProcessor {
     }
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
+    public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         this.logger = LogFactory.getInstance().getLogger();
 
