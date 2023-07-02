@@ -8,10 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.pakistancan.codable.annotation.Codable;
 import io.github.pakistancan.codable.annotation.IgnoreProperty;
-import io.github.pakistancan.codable.logging.LogFactory;
-import io.github.pakistancan.codable.logging.Logger;
 import io.github.pakistancan.codable.model.ObjectType;
 import io.github.pakistancan.codable.model.TypeInfo;
+
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -19,7 +22,9 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -28,7 +33,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author muhammadali
- *
  */
 @SupportedAnnotationTypes("io.github.pakistancan.codable.annotation.Codable")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -36,10 +40,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class CodableGenerator extends AbstractProcessor {
 
     private static final String EXT = ".swift";
-
     private static final Set<String> reserveWords = new HashSet<>();
     private static final Set<String> restrictedWords = new HashSet<>();
-
     private static final String[] collectionsInterfaces = new String[]{Set.class.getCanonicalName(),
             List.class.getCanonicalName(), Map.class.getCanonicalName()};
     private static final Set<String> allowedModifiers = new HashSet<>();
@@ -49,6 +51,7 @@ public class CodableGenerator extends AbstractProcessor {
         reserveWords.add("operator");
         reserveWords.add("func");
         restrictedWords.add("self");
+        BasicConfigurator.configure();
     }
 
     static {
@@ -56,16 +59,15 @@ public class CodableGenerator extends AbstractProcessor {
         allowedModifiers.add("open");
     }
 
+    private final Logger logger = LoggerFactory.getLogger(CodableGenerator.class);
     private final ConcurrentMap<String, TypeMirror> collectionTypeMirror = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, StringBuilder> generatedEnums = new ConcurrentHashMap<>();
     private String outputDir = "./generated/";
     private String packagePrefix = "com.alix.";
     private String classModifier = "public";
 
-	private boolean generateStructs = false;
+    private boolean generateStructs = false;
     private boolean generateFormatters = false;
-    private Logger logger;
-    // private String string;
 
     /**
      *
@@ -76,10 +78,9 @@ public class CodableGenerator extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.logger = LogFactory.getInstance().getLogger();
 
         Map<String, String> options = this.processingEnv.getOptions();
-        this.logger.info("Options :: " + options);
+        this.logger.debug("Options :: " + options);
         String outDir = options.get("OutputDir");
         if (outDir != null) {
             this.outputDir = outDir;
@@ -99,14 +100,14 @@ public class CodableGenerator extends AbstractProcessor {
             this.classModifier = modifier;
         }
 
-		String generateStruct = options.get("GenerateStructs");
-		if (generateStruct != null && generateStruct.equals("true")){
-			this.generateStructs = true;
+        String generateStruct = options.get("GenerateStructs");
+        if (generateStruct != null && generateStruct.equals("true")) {
+            this.generateStructs = true;
             this.classModifier = "public";
         }
 
         for (String ifaceName : collectionsInterfaces) {
-            this.logger.info("Interface Name" + ifaceName);
+            this.logger.debug("Interface Name" + ifaceName);
             collectionTypeMirror.put(ifaceName,
                     this.processingEnv.getElementUtils().getTypeElement(ifaceName).asType());
         }
@@ -118,9 +119,9 @@ public class CodableGenerator extends AbstractProcessor {
     private void generateCodable(TypeElement element, RoundEnvironment roundEnv) {
 
         TypeMirror parent = element.getSuperclass();
-        this.logger.info("parent :: " + parent);
+        this.logger.debug("parent :: " + parent);
         String parentClass = "";
-        if (!"java.lang.Object".equals(parent.toString())) {
+        if (!Object.class.getCanonicalName().equals(parent.toString())) {
             parentClass = parent.toString();
             if (parentClass.contains(".")) {
                 parentClass = parentClass.substring(parentClass.lastIndexOf(".") + 1);
@@ -128,27 +129,27 @@ public class CodableGenerator extends AbstractProcessor {
         }
 
         StringBuilder builder = new StringBuilder();
-        this.logger.info("Encloding Elems :: " + element.getEnclosedElements());
+        this.logger.debug("Encloding Elems :: " + element.getEnclosedElements());
 
         builder.append("import Foundation\n\n");
-		String swiftTypeName = " class ";
-        logger.info("this.generateStructs: " + this.generateStructs+" parentClass.length(): "+parentClass.length());
+        String swiftTypeName = " class ";
+        logger.debug("this.generateStructs: " + this.generateStructs + " parentClass.length(): " + parentClass.length());
 
-		if (this.generateStructs && parentClass.length() == 0) {
-			swiftTypeName = " struct ";
-		}
+        if (this.generateStructs && parentClass.length() == 0) {
+            swiftTypeName = " struct ";
+        }
         builder.append(classModifier).append(swiftTypeName).append(element.getSimpleName());
         boolean override = false;
 
         if (parentClass.length() > 0) {
             builder.append(": ").append(parentClass).append(" {\n");
-			builder.append("    public override init() {\n        super.init()\n    }\n");
+            builder.append("    public override init() {\n        super.init()\n    }\n");
             override = true;
         } else {
             builder.append(": Codable {\n");
-			if (!this.generateStructs) {
-				builder.append("    public init() {\n    }\n");
-			}
+            if (!this.generateStructs) {
+                builder.append("    public init() {\n    }\n");
+            }
         }
 
         List<? extends Element> tElemns = processingEnv.getElementUtils().getAllMembers(element);
@@ -178,24 +179,24 @@ public class CodableGenerator extends AbstractProcessor {
 
         for (Element field : tElemns) {
             VariableElement var = (VariableElement) field;
-            System.err.println("Var :: " + var);
+            logger.debug("Var :: " + var);
             if (var.getModifiers().contains(Modifier.STATIC)) {
-                this.logger.info("continuing ");
+                this.logger.debug("continuing ");
                 continue;
             }
             JsonIgnoreProperties jsonIgnoreProp = var.getAnnotation(JsonIgnoreProperties.class);
             IgnoreProperty ignoreProp = var.getAnnotation(IgnoreProperty.class);
             if (ignoreProp != null || jsonIgnoreProp != null) {
-                this.logger.info("ignore property annotation found");
+                this.logger.debug("ignore property annotation found");
                 continue;
             }
 
             if (!var.getEnclosingElement().getSimpleName().equals(element.getSimpleName())) {
-                this.logger.info(" super class  continuing ");
+                this.logger.debug(" super class  continuing ");
                 continue;
             }
 
-            this.logger.info("Field :: " + var.getSimpleName() + " " + field.asType().toString() + " :: "
+            this.logger.debug("Field :: " + var.getSimpleName() + " " + field.asType().toString() + " :: "
                     + field.asType().getClass().getCanonicalName());
             String type = field.asType().toString();
 
@@ -217,7 +218,7 @@ public class CodableGenerator extends AbstractProcessor {
             JsonProperty prop = var.getAnnotation(JsonProperty.class);
             if (null != prop) {
                 jsonMap.put(varName, prop.value());
-                this.logger.info("Json Map :: " + prop);
+                this.logger.debug("Json Map :: " + prop);
             } else {
                 jsonMap.put(varName, varName);
             }
@@ -272,7 +273,7 @@ public class CodableGenerator extends AbstractProcessor {
             decoder.append("\n        }\n");
 
             encoder.append(
-                    "        try container.encodeIfPresent(").append(encodedValueName).
+                            "        try container.encodeIfPresent(").append(encodedValueName).
                     append(", forKey: .").append(varName).append(")\n");
 
         }
@@ -325,10 +326,10 @@ public class CodableGenerator extends AbstractProcessor {
     }
 
     private synchronized TypeInfo getTypeInfo(String type, Element field, Map<String, List<String>> enumMap,
-                                RoundEnvironment roundEnv) {
+                                              RoundEnvironment roundEnv) {
         TypeInfo newType = null;
 
-        this.logger.info("PARSING: " + type);
+        this.logger.debug("PARSING: " + type);
 
         if (type.endsWith("[]")) {
             String tp = type.substring(0, type.lastIndexOf("[]"));
@@ -426,24 +427,24 @@ public class CodableGenerator extends AbstractProcessor {
             if (type.contains("<")) {
 
                 String tp = type.substring(0, type.indexOf("<"));
-                this.logger.info("type: " + tp);
+                this.logger.debug("type: " + tp);
                 TypeElement tm = processingEnv.getElementUtils().getTypeElement(tp);
 
 //                TypeElement tm = mirror;
                 do {
-                    this.logger.info("class:: " + tm);
+                    this.logger.debug("class:: " + tm);
                     for (TypeMirror iface : tm.getInterfaces()) {
                         for (Map.Entry<String, TypeMirror> infaceName : this.collectionTypeMirror.entrySet()) {
                             TypeMirror ifaceMirror = infaceName.getValue();
-                            this.logger.info("iface:: " + iface + " ifaceMirror:: " + ifaceMirror);
-                            this.logger.info("Assignable01:: "
+                            this.logger.debug("iface:: " + iface + " ifaceMirror:: " + ifaceMirror);
+                            this.logger.debug("Assignable01:: "
                                     + processingEnv.getTypeUtils().isAssignable(tm.asType(), ifaceMirror));
-                            this.logger.info("Assignable02:: "
+                            this.logger.debug("Assignable02:: "
                                     + processingEnv.getTypeUtils().isAssignable(ifaceMirror, tm.asType()));
 
-                            this.logger.info(
+                            this.logger.debug(
                                     "Assignable1:: " + processingEnv.getTypeUtils().isAssignable(iface, ifaceMirror));
-                            this.logger.info(
+                            this.logger.debug(
                                     "Assignable2:: " + processingEnv.getTypeUtils().isAssignable(ifaceMirror, iface));
                             if (processingEnv.getTypeUtils().isAssignable(ifaceMirror, iface)
                                     || iface.toString().contains(ifaceMirror.toString())) {
@@ -456,7 +457,7 @@ public class CodableGenerator extends AbstractProcessor {
                     }
 
                     String superClassName = tm.getSuperclass().toString();
-                    this.logger.info("superClassName:: " + superClassName);
+                    this.logger.debug("superClassName:: " + superClassName);
                     if (superClassName.equals(Object.class.getCanonicalName())) {
                         break;
                     }
@@ -464,9 +465,9 @@ public class CodableGenerator extends AbstractProcessor {
                         superClassName = superClassName.substring(0, superClassName.indexOf("<"));
                     }
 
-                    this.logger.info("superClassName:: " + superClassName);
+                    this.logger.debug("superClassName:: " + superClassName);
                     tm = processingEnv.getElementUtils().getTypeElement(superClassName);
-                    this.logger.info("superClassName:: " + tm + "ifaces" + tm.getInterfaces());
+                    this.logger.debug("superClassName:: " + tm + "ifaces" + tm.getInterfaces());
 
                 } while (tm != null);
 
@@ -513,7 +514,7 @@ public class CodableGenerator extends AbstractProcessor {
                 + "    }\n" + "    \n" + "    public func getDate(interval: Int64) -> Date {\n"
                 + "        return Date(timeIntervalSince1970: (Double(interval)/1000.0))\n" + "    }\n"
                 + "    public func getMilliSeconds(date: Date) -> Int64 {\n"
-                + "        return Int64(date.timeIntervalSince1970 * 1000)\n" + "    }\n" + "}\n" + "";
+                + "        return Int64(date.timeIntervalSince1970 * 1000)\n" + "    }\n" + "}\n";
 
         this.writeOutput(formatterClass, outputDir + prefix, key + EXT);
 
@@ -524,6 +525,7 @@ public class CodableGenerator extends AbstractProcessor {
         if (!file.exists()) {
             file.mkdirs();
         }
+
         String newPath = directory + filename;
         if (directory.endsWith(File.separator)) {
             newPath = directory + File.separator + filename;
