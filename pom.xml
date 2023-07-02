@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.pakistancan</groupId>
 	<artifactId>codable-converter</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>java-codable is a Java beans to swift codable converter, it is java compile plugin, you need to add this your maven configuration to get it working.</description>
 	<url>https://github.com/pakistancan/java-codable</url>
